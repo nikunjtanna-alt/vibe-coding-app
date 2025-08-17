@@ -129,7 +129,7 @@ function closePaymentModal() {
     document.querySelector('.payment-form').reset();
 }
 
-function handlePayment(event) {
+async function handlePayment(event) {
     event.preventDefault();
     
     // Get form data
@@ -150,23 +150,55 @@ function handlePayment(event) {
     }
     
     // Simulate payment processing
-    showNotification('Processing payment...', 'info');
+    // In your script.js, replace the simulated payment with real API call
+async function handlePayment(event) {
+    event.preventDefault();
     
-    setTimeout(() => {
-        // Simulate successful payment
-        showNotification('Payment successful! Thank you for your purchase!', 'success');
+    try {
+        // Prepare payment request
+        const paymentRequest = {
+            cardholderName: cardName,
+            cardNumber: cardNumber,
+            expiryDate: expiry,
+            cvv: cvv,
+            amount: cartTotal,
+            orderItems: cart.map(item => ({
+                productName: item.name,
+                quantity: item.quantity,
+                price: item.price
+            }))
+        };
         
-        // Clear cart
-        cart = [];
-        updateCartDisplay();
+        // Call the Spring Boot payment service
+        const response = await fetch('http://localhost:8080/payment-service/api/payments/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(paymentRequest)
+        });
         
-        // Close modal
-        closePaymentModal();
+        const result = await response.json();
         
-        // Close cart sidebar
-        cartSidebar.classList.remove('open');
-        
-    }, 2000);
+        if (result.status === 'COMPLETED') {
+            showNotification(`Payment successful! Transaction ID: ${result.transactionId}`, 'success');
+            
+            // Clear cart
+            cart = [];
+            updateCartDisplay();
+            
+            // Close modal
+            closePaymentModal();
+            
+            // Close cart sidebar
+            cartSidebar.classList.remove('open');
+        } else {
+            showNotification(result.errorMessage || 'Payment failed!', 'error');
+        }
+    } catch (error) {
+        console.error('Payment error:', error);
+        showNotification('Payment processing failed: ' + error.message, 'error');
+    }
 }
 
 // Notification system
