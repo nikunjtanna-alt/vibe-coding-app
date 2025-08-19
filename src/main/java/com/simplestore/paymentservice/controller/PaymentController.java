@@ -6,6 +6,8 @@ import com.simplestore.paymentservice.entity.Payment;
 import com.simplestore.paymentservice.entity.PaymentStatus;
 import com.simplestore.paymentservice.service.PaymentService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.Optional;
 @CrossOrigin(origins = "*") // Allow CORS for frontend integration
 public class PaymentController {
     
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+    
     @Autowired
     private PaymentService paymentService;
     
@@ -28,16 +32,24 @@ public class PaymentController {
      */
     @PostMapping("/process")
     public ResponseEntity<PaymentResponse> processPayment(@Valid @RequestBody PaymentRequest request) {
+        logger.info("🔵 Payment request received - Amount: ${}, Cardholder: {}, Items: {}", 
+                   request.getAmount(), request.getCardholderName(), request.getOrderItems().size());
+        
         try {
             PaymentResponse response = paymentService.processPayment(request);
             
             if (response.getStatus() == PaymentStatus.COMPLETED) {
+                logger.info("✅ Payment successful - Transaction ID: {}, Amount: ${}", 
+                           response.getTransactionId(), response.getAmount());
                 return ResponseEntity.ok(response);
             } else {
+                logger.warn("⚠️ Payment failed - Status: {}, Error: {}", 
+                           response.getStatus(), response.getErrorMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
             
         } catch (Exception e) {
+            logger.error("❌ Payment processing error: {}", e.getMessage(), e);
             PaymentResponse errorResponse = PaymentResponse.failure(
                 "TXN-ERROR", 
                 "Payment processing failed: " + e.getMessage()
@@ -139,6 +151,7 @@ public class PaymentController {
      */
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
+        logger.info("🏥 Health check requested");
         return ResponseEntity.ok("Payment Service is running!");
     }
     

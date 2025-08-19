@@ -149,11 +149,6 @@ async function handlePayment(event) {
         return;
     }
     
-    // Simulate payment processing
-    // In your script.js, replace the simulated payment with real API call
-async function handlePayment(event) {
-    event.preventDefault();
-    
     try {
         // Prepare payment request
         const paymentRequest = {
