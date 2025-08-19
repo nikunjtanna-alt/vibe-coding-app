@@ -134,3 +134,4 @@ To add more products, duplicate the product card structure in `index.html`:
 - Search and filtering
 - Wishlist functionality
 - Product reviews and ratings
+# Demo Feature Branch
