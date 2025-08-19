@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add form submission handler
     const paymentForm = document.querySelector('.payment-form');
     paymentForm.addEventListener('submit', handlePayment);
+    
+    // Add search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+        searchProducts();
+    });
 });
 
 // Cart functions
@@ -86,6 +92,40 @@ function updateCartDisplay() {
     });
     
     cartTotalElement.textContent = `$${cartTotal.toFixed(2)}`;
+}
+
+// Search functionality
+function searchProducts() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const productCards = document.querySelectorAll('.product-card');
+    
+    productCards.forEach(card => {
+        const productName = card.querySelector('h3').textContent.toLowerCase();
+        const productDescription = card.querySelector('.description').textContent.toLowerCase();
+        
+        if (productName.includes(searchTerm) || productDescription.includes(searchTerm)) {
+            card.style.display = 'block';
+            card.style.animation = 'slideIn 0.3s ease';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Show message if no products found
+    const visibleProducts = document.querySelectorAll('.product-card[style*="display: block"]');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    
+    if (visibleProducts.length === 0 && searchTerm !== '') {
+        if (!noResultsMessage) {
+            const message = document.createElement('div');
+            message.id = 'noResultsMessage';
+            message.innerHTML = '<p>No products found matching "' + searchTerm + '"</p>';
+            message.style.cssText = 'text-align: center; padding: 40px; color: #666; font-size: 1.2rem;';
+            document.querySelector('.products-grid').appendChild(message);
+        }
+    } else if (noResultsMessage) {
+        noResultsMessage.remove();
+    }
 }
 
 // Cart sidebar toggle
