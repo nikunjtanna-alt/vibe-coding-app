@@ -109,6 +109,27 @@
     - Result: ✅ Compilation SUCCESS | ✅ Tests: 0/0 passed (no tests found)
     - Notes: No test sources detected under src/test/java
   - **Deferred Work**: None
+  - **Commit**: b0dba7b8163322c36bfcfc2991985677fd40a817 - Step 2: Setup Baseline - Compile: SUCCESS, Tests: 0/0 passed
+
+---
+
+- **Step 3: Upgrade to Java 21**
+  - **Status**: ✅ Completed
+  - **Changes Made**:
+    - Updated `<java.version>` to 21 in pom.xml
+    - Added Maven Compiler Plugin configuration to enforce `release 21`
+  - **Review Code Changes**:
+    - Sufficiency: ✅ All required changes present
+    - Necessity: ✅ All changes necessary
+      - Functional Behavior: ✅ Preserved
+      - Security Controls: ✅ Preserved
+  - **Verification**:
+    - Command: `JAVA_HOME=/Users/prishatanna/.jdk/jdk-21.0.8/jdk-21.0.8+9/Contents/Home mvn -q clean test-compile`
+    - JDK: /Users/prishatanna/.jdk/jdk-21.0.8/jdk-21.0.8+9/Contents/Home
+    - Build tool: /opt/homebrew/Cellar/maven/3.9.11/bin/mvn
+    - Result: ✅ Compilation SUCCESS
+    - Notes: None
+  - **Deferred Work**: None
   - **Commit**: (to be filled after commit)
 
 ---
